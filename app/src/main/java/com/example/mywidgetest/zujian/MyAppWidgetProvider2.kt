@@ -9,13 +9,12 @@ import android.content.Intent
 import android.util.Log
 import android.widget.RemoteViews
 import com.example.mywidgetest.R
-import java.text.SimpleDateFormat
-import java.util.Date
+import com.example.mywidgetest.WidgetUtils
 
 class MyAppWidgetProvider2 : AppWidgetProvider() {
     companion object {
         const val TAG = "MyAppWidgetProvider2"
-        private const val CLICK_ACTION = "com.barry.widgetapp.plus.CLICK2"
+        const val CLICK_ACTION = "com.barry.widgetapp.plus.CLICK2"
     }
 
     override fun onReceive(context: Context?, intent: Intent?) {
@@ -26,7 +25,7 @@ class MyAppWidgetProvider2 : AppWidgetProvider() {
             Log.i(TAG, "intent!!.action.equals(CLICK_ACTION)")
             //因为点击按钮后要对布局中的文本进行更新，所以需要创建一个远程view
             val remoteViews = RemoteViews(context!!.packageName, R.layout.example_appwidget2)
-            remoteViews.setTextViewText(R.id.text_view, getCurrentTime())
+            remoteViews.setTextViewText(R.id.text_view, WidgetUtils.getCurrentTime())
             //更新widget
             appWidgetManager.updateAppWidget(
                 ComponentName(
@@ -35,13 +34,6 @@ class MyAppWidgetProvider2 : AppWidgetProvider() {
                 ), remoteViews
             )
         }
-    }
-
-    private fun getCurrentTime(): String {
-        val timestamp = System.currentTimeMillis() // 获取当前时间戳
-        val date = Date(timestamp) // 将时间戳转换为Date对象
-        val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss") // 定义日期格式
-        return sdf.format(date)
     }
     override fun onUpdate(
         context: Context?,
@@ -74,7 +66,7 @@ class MyAppWidgetProvider2 : AppWidgetProvider() {
                 setOnClickPendingIntent(R.id.button, pendingIntent)
             }
 
-            views.setTextViewText(R.id.text_view, getCurrentTime())
+            views.setTextViewText(R.id.text_view, WidgetUtils.getCurrentTime())
             // Tell the AppWidgetManager to perform an update on the current app widget
             appWidgetManager?.updateAppWidget(appWidgetId, views)
         }

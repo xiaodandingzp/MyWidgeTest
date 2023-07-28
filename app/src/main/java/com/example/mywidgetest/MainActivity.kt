@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
+import android.widget.RemoteViews
 import androidx.core.content.ContextCompat
 import com.example.mywidgetest.zujian.MyAppWidgetProvider
 import com.example.mywidgetest.zujian.MyAppWidgetProvider2
@@ -29,6 +30,12 @@ class MainActivity : AppCompatActivity() {
         findViewById<Button>(R.id.button2_zp).setOnClickListener {
             if (!checkInstall(MyAppWidgetProvider2::class.java)) {
                 requestCompoent2()
+            }
+        }
+
+        findViewById<Button>(R.id.button3_zp).setOnClickListener {
+            if (checkInstall(MyAppWidgetProvider2::class.java)) {
+                updateWidget2()
             }
         }
     }
@@ -54,6 +61,37 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun updateWidget2() {
+        val mAppWidgetManager =
+            ContextCompat.getSystemService(this, AppWidgetManager::class.java)
+
+        val  myProvider = ComponentName(this, MyAppWidgetProvider2::class.java)
+        val intentClick = Intent()
+        //这个必须要设置，不然点击效果会无效
+        //这个必须要设置，不然点击效果会无效
+        intentClick.setClass(this, MyAppWidgetProvider2::class.java)
+        intentClick.action = MyAppWidgetProvider2.CLICK_ACTION
+        //PendingIntent表示的是一种即将发生的意图，区别于Intent它不是立即会发生的
+        //PendingIntent表示的是一种即将发生的意图，区别于Intent它不是立即会发生的
+        val pendingIntent = PendingIntent.getBroadcast(
+            this,
+            0,
+            intentClick,
+            PendingIntent.FLAG_MUTABLE
+        )
+
+        // Get the layout for the App Widget and attach an on-click listener
+        // to the button
+        val views = RemoteViews(
+            this.packageName,
+            R.layout.example_appwidget2
+        ).apply {
+            setOnClickPendingIntent(R.id.button, pendingIntent)
+        }
+
+        views.setTextViewText(R.id.text_view, WidgetUtils.getCurrentTime())
+        mAppWidgetManager?.updateAppWidget(myProvider, views)
+    }
 
     fun requestCompoent() {
         Log.i(TAG, "requestCompoent requestCompoent requestCompoent")
